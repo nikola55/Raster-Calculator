@@ -7,6 +7,7 @@ namespace cproc {
 enum TokenType {
 	BEGINPRG, 
 	ENDPRG,
+	STRING,
 	NAME,
 	NUMBER,
 	OR,
@@ -34,6 +35,7 @@ std::string type_to_name(const Token &tok) {
 	switch(tok.type) {
 		case BEGINPRG : { return "BEGINPRG";  break; }
 		case ENDPRG : { return "ENDPRG";  break; }
+		case STRING: { return "STRING";  break; }
 		case NAME : { return "NAME";  break; }
 		case NUMBER : { return "NUMBER";  break; }
 		case OR : { return "OR";  break; }

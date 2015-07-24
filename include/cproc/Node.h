@@ -7,7 +7,7 @@
 namespace cproc {
 
 enum NodeType {
-	NODE, NAME_NODE, NUMBER_NODE, 
+	NODE, NAME_NODE, NUMBER_NODE, STRING_NODE,
 	FUNCTION_NODE, OPER_NODE, ASSIGNMENT
 };
 
@@ -38,6 +38,10 @@ inline void printNodeType(NodeType nt) {
 		}
 		case ASSIGNMENT : {
 			cout << "ASSIGNMENT" << endl;
+			break; 
+		}
+		case STRING_NODE : {
+			cout << "STRING_NODE" << endl;
 			break; 
 		}
 		default :
@@ -181,6 +185,17 @@ public:
 	}
 };
 
+class String_Node : public Node {
+	std::string v;
+public:
+	String_Node(const std::string &value) :
+		Node(STRING_NODE, true), v(value) {
+	}
+	
+	const std::string & value() const {
+		return v;
+	}
+};
 }
 
 #endif
