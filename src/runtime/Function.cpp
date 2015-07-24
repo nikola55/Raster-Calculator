@@ -22,14 +22,18 @@ enum Function_Type {
 };
 }
 
+
+
 static std::string names[19] = {
 	"load",
-	"save"
+	"save",
 };
 
 runtime::Function * 
-runtime::resolve(const std::string &name, 
-				const std::vector<Type*> &args) {
+runtime::resolve( Context * ctx,
+				  const std::string &name, 
+				  const std::vector<Type*> &args
+				 ) {
 	
 	if(name == names[IO_LOAD]) {
 		std::cout << "Loading.." << std::endl;

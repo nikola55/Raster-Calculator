@@ -85,7 +85,7 @@ runtime::Type* runtime::Runtime::function(cproc::Function *node) {
 		cproc::Node * arg = node->getArg(i);
 		argList.push_back(execute(arg));
 	}
-	Function * func = resolve(nm, argList);
+	Function * func = resolve(cntx, nm, argList);
 	// Remove this if.
 	if(func) {
 		func->execute();

@@ -11,13 +11,27 @@ class Context {
 	std::map<std::string, Type*> vars;
 public:
 	Type * add(const std::string &nm, Type * t) {
-		
+		if(vars.find(nm) != vars.end()) {
+			throw std::runtime_error("add(const std::string &nm, Type * t)"
+									 "Variable already in the map.");
+		}
+		vars[nm] = t;
 	}
 	Type * get(const std::string &nm) {
-		
+		if(vars.find(nm) == vars.end()) {
+			throw std::runtime_error("get(const std::string &nm)"
+									 "No variable with this name in the map.");
+		}
+		return vars[nm];
 	}
 	void del(const std::string &nm) {
-		
+		std::map<std::string, Type*>::iterator it =
+			vars.find(nm);
+		if(it == vars.end()) {
+			throw std::runtime_error("del(const std::string &nm)"
+									 "No variable with this name in the map.");
+		}
+		vars.erase(it);
 	}
 };
 	
