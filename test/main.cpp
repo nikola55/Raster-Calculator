@@ -9,8 +9,8 @@ using namespace std;
 
 int main(void) {
 
-	std::string expr="Img = load('C:/Users/Nikola/CodeBlocksProjects/pixes_shared/a3LdE97_460s.jpg', 'jpeg');"
-                     "Edge = edge(Img);"
+	std::string expr="Img = load('poptest.jpg');"
+                     "Edge = edge(Img, 'SOBEL');"
                      "save(Edge, 'saved.jpg', 'jpeg');";
 
 	Lexer lex = Lexer(expr);

@@ -5,13 +5,15 @@ namespace raster {
 struct RasterSpec {
 	int width, height;
 	RasterType type;
-	RasterSpec( int width, 
-				int height, 
-				RasterType type) :
-				width(width), 
-				height(height), 
-				type(type) {
-	}
+
+	RasterSpec( int width,
+				int height,
+				RasterType type)
+				:
+                width(width),
+				height(height),
+				type(type)
+    {	}
 };
 
 Raster * create(RasterSpec);

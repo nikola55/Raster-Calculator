@@ -1,8 +1,13 @@
-#include <Function.h>
 #include <iostream>
+
+#include <Function.h>
+#include <RasterManager.h>
+
+#include "Raster_pixes.h"
+
 #include <ImageIO.h>
 #include <ConvolveUtils.h>
-#include "Raster_pixes.h"
+
 namespace runtime {
 
 class LoadFunc : public Function {
@@ -10,23 +15,21 @@ class LoadFunc : public Function {
     Raster * res;
 public:
     LoadFunc(const std::vector<Type*> &args) {
-        for(int i = 0 ;i  < args.size() ; i++) {
-            if(args[i]->type()==Type::STRING) {
-                fnm = static_cast<String*>(args[i])->value();
-                break;
-            }
+        if(args.size() != 1) {
+            throw std::runtime_error("LoadFunc(): Not valid number of arguments.");
         }
+        fnm = dynamic_cast<String*>(args[0])->value();
     }
     void execute() {
-
         raster::RasterPixesRGB *rgb =
-            new raster::RasterPixesRGB(new pix::Matrix(1,1),
-                                        new pix::Matrix(1,1),
-                                        new pix::Matrix(1,1));
+                dynamic_cast<raster::RasterPixesRGB*> (
+                raster::create(
+                        raster::RasterSpec(1,1, raster::RASTER_RGB))
+                );
         pix::loadFromFile(fnm.c_str(), *rgb->r, *rgb->g, *rgb->b);
         res = new Raster("", rgb);
-
     }
+
     int nArgs() {return 1;}
     void addArg(int pos, Type *t) {}
     Type * arg(int pos) {}
@@ -42,7 +45,12 @@ public:
         if(args.size()!=3) {
             throw std::runtime_error("SaveFunc(): Not valid number of arguments.");
         }
-        r = (Raster*)args[0];
+        if(args[0]->type() != Type::RASTER ||
+           args[1]->type() != Type::STRING ||
+           args[2]->type() != Type::STRING ) {
+            throw std::runtime_error("SaveFunc(): Not valid argument type.");
+        }
+        r = dynamic_cast<Raster*>(args[0]);
         nm = dynamic_cast<String*>(args[1])->value();
         format = dynamic_cast<String*>(args[2])->value();
     }
@@ -75,12 +83,26 @@ public:
 class EdgeFunc : public Function {
     Raster * r;
     Raster * res;
+    pix::EdgeDetectType t;
 public:
     EdgeFunc(const std::vector<Type*> args) {
         if(args.size()<1) {
             throw std::runtime_error("EdgeFunc(): Not valid number of arguments.");
         }
         r = dynamic_cast<Raster*>(args[0]);
+        if(args.size() == 2 && args[1]->type() == Type::STRING) {
+
+            const std::string &edgeAlg =
+                dynamic_cast<String*>(args[1])->value();
+            t =  pix::SOBEL;
+            if(edgeAlg == "SOBEL") {
+                t = pix::SOBEL;
+            } else if(edgeAlg == "LOG") {
+                t =  pix::LOG;
+            } else {
+                throw std::runtime_error("EdgeFunc(): unknown edge detection.");
+            }
+        }
     }
      void execute() {
         switch(r->raster()->type()) {
@@ -89,15 +111,16 @@ public:
                 raster::RasterPixesRGB *rgb =
                     dynamic_cast<raster::RasterPixesRGB*>(r->raster());
 
-                pix::Matrix * newR = new pix::Matrix(rgb->r->nCols, rgb->r->nRows);
-                pix::Matrix * newG = new pix::Matrix(rgb->g->nCols, rgb->g->nRows);
-                pix::Matrix * newB = new pix::Matrix(rgb->b->nCols, rgb->b->nRows);
+                raster::RasterPixesRGB *result =
+                    dynamic_cast<raster::RasterPixesRGB *>(
+                        raster::create(raster::RasterSpec(
+                            rgb->r->nCols, rgb->r->nRows, raster::RASTER_RGB))
+                   );
 
-                pix::edgeDetect(*rgb->r, *newR, pix::SOBEL);
-                pix::edgeDetect(*rgb->g, *newG, pix::SOBEL);
-                pix::edgeDetect(*rgb->b, *newB, pix::SOBEL);
+                pix::edgeDetect(*rgb->r, *result->r, t);
+                pix::edgeDetect(*rgb->g, *result->g, t);
+                pix::edgeDetect(*rgb->b, *result->b, t);
 
-                raster::RasterPixesRGB *result = new raster::RasterPixesRGB(newR, newG, newB);
                 res = new Raster("", result);
             }
             case raster::RASTER_GRAY: {
@@ -126,8 +149,7 @@ runtime::resolve( Context * ctx,
 				 ) {
 
 	if(name == std::string("load")) {
-        LoadFunc * lf = new LoadFunc(args);
-        return lf;
+        return new LoadFunc(args);
 	} else if (name == std::string("save")) {
 		return new SaveFunc(args);
 	} else if (name == std::string("edge")) {
