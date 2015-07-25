@@ -100,7 +100,6 @@ runtime::Type* runtime::Runtime::function(cproc::Function *node) {
 
     for(int i = 0 ;i  < argList.size() ; i++) {
         if(argList[i]->temporary()) {
-            std::cout << "Delete temporary " << argList[i]->type() << std::endl;
             delete argList[i];
             continue;
         }

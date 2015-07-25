@@ -25,10 +25,6 @@ enum Function_Type {
 };
 }
 
-static std::string names[19] = {
-	"load",
-	"save",
-};
 namespace runtime {
 
 class LoadFunc : public Function {
@@ -152,10 +148,10 @@ runtime::resolve( Context * ctx,
 				  const std::vector<Type*> &args
 				 ) {
 
-	if(name == names[IO_LOAD]) {
+	if(name == std::string("load")) {
         LoadFunc * lf = new LoadFunc(args);
         return lf;
-	} else if (name == names[IO_SAVE]) {
+	} else if (name == std::string("save")) {
 		return new SaveFunc(args);
 	} else if (name == std::string("edge")) {
 		return new EdgeFunc(args);

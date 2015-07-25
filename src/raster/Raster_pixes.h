@@ -9,13 +9,11 @@ public:
 	pix::Matrix * r, * g, * b;
 	RasterPixesRGB(pix::Matrix*r, pix::Matrix*g, pix::Matrix*b) :
 		r(r), g(g), b(b) {
-        std::cout << "RasterPixesRGB()" <<std::endl;
 	}
 	~RasterPixesRGB() {
         delete r;
         delete g;
         delete b;
-        std::cout << "~RasterPixesRGB()" <<std::endl;
 	}
 };
 
@@ -24,10 +22,8 @@ public:
 	pix::Matrix *g;
 	RasterPixesGray(pix::Matrix *g) :
 		g(g) {
-        std::cout << "RasterPixesGray()" <<std::endl;
 	}
 	~RasterPixesGray() {
-	    std::cout << "~RasterPixesGray()" <<std::endl;
         delete g;
 	}
 };
@@ -37,10 +33,8 @@ public:
 	pix::Matrix *b;
 	RasterPixesBinary(pix::Matrix *b) :
 		b(b) {
-        std::cout << "RasterPixesBinary()" <<std::endl;
 	}
 	~RasterPixesBinary() {
-	    std::cout << "~RasterPixesBinary()" <<std::endl;
         delete b;
 	}
 };

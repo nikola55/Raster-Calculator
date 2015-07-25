@@ -5,7 +5,7 @@
 namespace cproc {
 
 enum TokenType {
-	BEGINPRG, 
+	BEGINPRG,
 	ENDPRG,
 	STRING,
 	NAME,
@@ -29,7 +29,7 @@ struct Token {
 	TokenType type;
 	std::string value;
 };
-
+#ifdef COMMAND_PROC_DEBUG
 inline
 std::string type_to_name(const Token &tok) {
 	switch(tok.type) {
@@ -42,18 +42,18 @@ std::string type_to_name(const Token &tok) {
 		case AND : { return "AND";  break; }
 		case XOR : { return "XOR";  break; }
 		case NOT : { return "NOT";  break; }
-		case PLUS : { return "PLUS";  break; } 
-		case MINUS : { return "MINUS";  break; } 
-		case END_STMT : { return "END_STMT";  break; } 
-		case DIV : { return "DIV";  break; } 
-		case MUL : { return "MUL";  break; } 
-		case ASSIGN : { return "ASSIGN";  break; } 
-		case SEQ : { return "SEQ";  break; } 
-		case LPAREN : { return "LPAREN";  break; } 
-		case RPAREN : { return "RPAREN";  break; } 
+		case PLUS : { return "PLUS";  break; }
+		case MINUS : { return "MINUS";  break; }
+		case END_STMT : { return "END_STMT";  break; }
+		case DIV : { return "DIV";  break; }
+		case MUL : { return "MUL";  break; }
+		case ASSIGN : { return "ASSIGN";  break; }
+		case SEQ : { return "SEQ";  break; }
+		case LPAREN : { return "LPAREN";  break; }
+		case RPAREN : { return "RPAREN";  break; }
 		default : { return "Invalid"; break; }
 	}
 }
-
+#endif
 }
 #endif

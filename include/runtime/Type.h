@@ -1,7 +1,11 @@
 #ifndef _TYPE_H_
 #define _TYPE_H_
 #include <string>
-#include <Raster.h>
+
+namespace raster {
+    class Raster;
+}
+
 namespace runtime{
 class Type {
 public:

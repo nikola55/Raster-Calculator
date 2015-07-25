@@ -6,7 +6,7 @@
 #include <Type.h>
 
 namespace runtime {
-	
+
 class Context {
 	std::map<std::string, Type*> vars;
 public:
@@ -18,11 +18,13 @@ public:
 		vars[nm] = t;
 	}
 	Type * get(const std::string &nm) {
-		if(vars.find(nm) == vars.end()) {
+        std::map<std::string, Type*>::iterator it
+                = vars.find(nm);
+		if(it == vars.end()) {
 			throw std::runtime_error("get(const std::string &nm)"
 									 "No variable with this name in the map.");
 		}
-		return vars[nm];
+		return it->second;
 	}
 	void del(const std::string &nm) {
 		std::map<std::string, Type*>::iterator it =
@@ -34,6 +36,6 @@ public:
 		vars.erase(it);
 	}
 };
-	
+
 }
 #endif

@@ -3,10 +3,11 @@
 #include <vector>
 #include <string>
 #include <Node.h>
-#include <Context.h>
-#include <Type.h>
-#include <RasterContext.h>
+
 namespace runtime {
+
+    class Context;
+    class Type;
 
 class Runtime {
 	Context * cntx;
