@@ -8,19 +8,17 @@ using namespace runtime;
 using namespace std;
 
 int main(void) {
-	
-	std::string expr="Gray = load('c:/Program Files/Commons/IE7/Images/sm.jpeg', 'jpeg');"
-					 "NOTED = threshold(NOT edge(Gray, LOG));"
-					 "ANDED = dilate(dilate(r)) AND erode(erode(r));";
-	
-	
+
+	std::string expr="Img = load('C:/Users/Nikola/CodeBlocksProjects/pixes_shared/a3LdE97_460s.jpg', 'jpeg');"
+                     "Edge = edge(Img);"
+                     "save(Edge, 'saved.jpg', 'jpeg');";
+
 	Lexer lex = Lexer(expr);
-	vector<Node*> parseTree = parse(lex);
-	
+	vector<Node*> stmtList  = parse(lex);
+
 	Runtime rt;
-	
-	rt.execute(parseTree);
-	
-	
-	
+
+	rt.execute(stmtList);
+
+
 }

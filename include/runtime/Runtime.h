@@ -5,6 +5,7 @@
 #include <Node.h>
 #include <Context.h>
 #include <Type.h>
+#include <RasterContext.h>
 namespace runtime {
 
 class Runtime {

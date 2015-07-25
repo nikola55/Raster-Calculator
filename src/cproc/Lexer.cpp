@@ -1,4 +1,4 @@
-#include "Lexer.h"
+#include <Lexer.h>
 #include <cctype>
 #include <vector>
 #include <iostream>
@@ -56,15 +56,15 @@ bool cproc::Lexer::tokenize() {
 		if(res) continue;
 		res = end();
 		continue;
-		throw runtime_error("Not valid token." + 
+		throw runtime_error("Not valid token." +
 		std::string(
-		input.begin() + currPos - 5,  
+		input.begin() + currPos - 5,
 		input.begin() + currPos + 5));
 	}
 }
 bool cproc::Lexer::endprog() {
 	if(input.size() == currPos) {
-		currTok.type = ENDPRG; 
+		currTok.type = ENDPRG;
 		currTok.value = "";
 		tokBuff.push_back(currTok);
 		return true;
@@ -74,15 +74,16 @@ bool cproc::Lexer::endprog() {
 static std::string KeyWords[4] = {
 	"OR", "NOT", "XOR", "AND"
 };
-inline 
+inline
 char getEscapeEnt(char ch) {
 	switch(ch) {
 		case 't' : return '\t';
 		case 'r' : return '\r';
 		case 'n' : return '\n';
 		case '\'': return '\'';
-		case '"' : return '\"';
-		default : 
+		case '"' : return '"';
+		case '\\': return '\\';
+		default :
 			throw std::runtime_error("getEscapeEnt(char ch) invalid ch");
 	}
 }
@@ -90,7 +91,7 @@ bool cproc::Lexer::string() {
 	if(currPos == input.size())
 		return false;
 	int tmpPos = currPos;
-	if(!(input[tmpPos] == '"' || 
+	if(!(input[tmpPos] == '"' ||
 		input[tmpPos] == '\'')) {
 		return false;
 	}
@@ -107,7 +108,8 @@ bool cproc::Lexer::string() {
 				 nextChar == 'r' ||
 				 nextChar == 'n' ||
 				 nextChar == '\'' ||
-				 nextChar == '"' )) {
+				 nextChar == '"'  ||
+				 nextChar == '\\')) {
 				throw std::runtime_error("Invalid escape sequence");
 			}
 			s.push_back(getEscapeEnt(nextChar));
@@ -130,13 +132,13 @@ bool cproc::Lexer::string() {
 	return true;
 }
 bool cproc::Lexer::name() {
-	if(currPos == input.size()) 
+	if(currPos == input.size())
 		return false;
 	int tmpPos = currPos;
 	char ch = input[tmpPos];
 	if(!(
-		isalpha(ch) || 
-		ch == '_' || ch == '$' || 
+		isalpha(ch) ||
+		ch == '_' || ch == '$' ||
 		ch == '#' || ch == '@'
 		)) return false;
 	std::vector<char> name;
@@ -156,7 +158,7 @@ bool cproc::Lexer::name() {
 	}
 	success : {
 		std::string nm = std::string(name.begin(), name.end());
-		if(std::find(KeyWords, KeyWords+4, nm) != KeyWords+4) { 
+		if(std::find(KeyWords, KeyWords+4, nm) != KeyWords+4) {
 			return false;
 		}
 		currPos = tmpPos;
@@ -167,7 +169,7 @@ bool cproc::Lexer::name() {
 	}
 }
 inline
-std::vector<char> digitSequence(const std::string &input, 
+std::vector<char> digitSequence(const std::string &input,
 								int currPos) {
 	std::vector<char> ds;
 	if(currPos >= input.size())
@@ -183,14 +185,14 @@ std::vector<char> digitSequence(const std::string &input,
 	return ds;
 }
 bool cproc::Lexer::number() {
-	if(currPos >= input.size()) 
+	if(currPos >= input.size())
 		return false;
 	int tmpPos = currPos;
 	std::vector<char> num;
 	std::vector<char> whole = digitSequence(input, tmpPos);
 	std::vector<char> fraction;
 	char ch;
-	if(whole.size() == 0) 
+	if(whole.size() == 0)
 		return false;
 	tmpPos+=whole.size();
 	num.insert(num.end(), whole.begin(), whole.end());
@@ -265,7 +267,7 @@ bool cproc::Lexer::assign() {
 	return false;
 }
 bool cproc::Lexer::oper() {
-	if(currPos >= input.size()) 
+	if(currPos >= input.size())
 		return false;
 	int startPosition = currPos;
 	char ch = input[currPos];
@@ -322,11 +324,11 @@ inline bool iswhitespace(char ch) {
 		   ch == '\t';
 }
 void cproc::Lexer::trimFront() {
-	if(currPos >= input.size()) 
+	if(currPos >= input.size())
 		return;
 	while(iswhitespace(input[currPos])) {
 		currPos++;
-		if(currPos >= input.size()) 
+		if(currPos >= input.size())
 			return;
 	}
 }

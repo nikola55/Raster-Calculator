@@ -5,7 +5,7 @@
 runtime::Runtime::Runtime() {
 	cntx = new Context();
 }
-runtime::Runtime::Runtime(Context*c) 
+runtime::Runtime::Runtime(Context*c)
 	: cntx(c) {
 
 }
@@ -17,47 +17,55 @@ void runtime::Runtime::execute(const std::vector<cproc::Node*> &stmtList) {
 }
 
 runtime::Type * runtime::Runtime::execute(cproc::Node* node) {
-	
+
 	Type * ret_type;
-	
+
 	switch(node->type()) {
 		case cproc::OPER_NODE: {
-			// Evaluate the operands and apply the 
+			// Evaluate the operands and apply the
 			// operation in it.
-			ret_type = 
+            // assign temporary.
+			ret_type =
 				oper(static_cast<cproc::Oper*>(node));
+            ret_type->temporary(true);
 			break;
 		}
 		case cproc::FUNCTION_NODE: {
 			// Execute the function and return the result.
-			ret_type = 
+            // assign temporary.
+			ret_type =
 				function(static_cast<cproc::Function*>(node));
+            ret_type->temporary(true);
 			break;
 		}
 		case cproc::ASSIGNMENT: {
-			// Usually create variable in the context.
+			// create variable in the context.
 			assign(static_cast<cproc::Assign*>(node));
 			break;
 		}
 		case cproc::NAME_NODE: {
 			// Search the context for a variable with
 			// the name.
-			ret_type = 
+			ret_type =
 				name(static_cast<cproc::Name*>(node));
 			break;
 		}
 		case cproc::NUMBER_NODE: {
 			// return number
-			cproc::Number * numn = 
+			// set temporary flag
+			cproc::Number * numn =
 				static_cast<cproc::Number*>(node);
 			ret_type = new Number(numn->value());
+			ret_type->temporary(true);
 			break;
 		}
 		case cproc::STRING_NODE: {
 			// return string;
-			cproc::String_Node * strn = 
+			// set temporary flag.
+			cproc::String_Node * strn =
 				static_cast<cproc::String_Node*>(node);
 			ret_type = new String(strn->value());
+			ret_type->temporary(true);
 			break;
 		}
 		default :
@@ -70,6 +78,7 @@ runtime::Type * runtime::Runtime::execute(cproc::Node* node) {
 void runtime::Runtime::assign(cproc::Assign *node) {
 	const std::string &varnm = node->name();
 	Type * tp = execute(node->rightHand());
+	tp->temporary(false);
 	cntx->add(varnm, tp);
 }
 
@@ -86,23 +95,29 @@ runtime::Type* runtime::Runtime::function(cproc::Function *node) {
 		argList.push_back(execute(arg));
 	}
 	Function * func = resolve(cntx, nm, argList);
-	// Remove this if.
-	if(func) {
-		func->execute();
-		Type * res = func->result();
-		return res;
-	}
-	return 0;
+    func->execute();
+    Type * res = func->result();
+
+    for(int i = 0 ;i  < argList.size() ; i++) {
+        if(argList[i]->temporary()) {
+            std::cout << "Delete temporary " << argList[i]->type() << std::endl;
+            delete argList[i];
+            continue;
+        }
+    }
+
+	delete func;
+	return res;
 }
 
 runtime::Type* runtime::Runtime::oper(cproc::Oper *node) {
 
 	cproc::Oper::OperType type = node->operType();
-	
+
 	Type * left = execute(node->left());
 	Type * right = execute(node->right());
-	
-	
-	
+
+
+
 	return 0;
 }
