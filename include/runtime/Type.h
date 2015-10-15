@@ -1,10 +1,7 @@
 #ifndef _TYPE_H_
 #define _TYPE_H_
 #include <string>
-
-namespace raster {
-    class Raster;
-}
+#include <../raster/Raster.h>
 
 namespace runtime{
 class Type {
@@ -86,7 +83,7 @@ public:
 };
 
 // The function is not an ordinary
-// type so it not inherits from Type
+// type so it doesn't inherits from Type
 class Function {
 public:
 	virtual void execute() = 0;

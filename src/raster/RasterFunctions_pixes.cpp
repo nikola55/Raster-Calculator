@@ -104,7 +104,7 @@ public:
             }
         }
     }
-     void execute() {
+    void execute() {
         switch(r->raster()->type()) {
             case raster::RASTER_RGB: {
 

@@ -4,10 +4,17 @@
 
 runtime::Runtime::Runtime() {
 	cntx = new Context();
+	outerContext = false;
 }
 runtime::Runtime::Runtime(Context*c)
-	: cntx(c) {
+	: outerContext(true), cntx(c) {
+	
+}
 
+runtime::Runtime::~Runtime() {
+	if(outerContext) {
+		delete cntx;
+	}
 }
 
 void runtime::Runtime::execute(const std::vector<cproc::Node*> &stmtList) {
@@ -94,6 +101,7 @@ runtime::Type* runtime::Runtime::function(cproc::Function *node) {
 		cproc::Node * arg = node->getArg(i);
 		argList.push_back(execute(arg));
 	}
+	
 	Function * func = resolve(cntx, nm, argList);
     func->execute();
     Type * res = func->result();
@@ -115,8 +123,18 @@ runtime::Type* runtime::Runtime::oper(cproc::Oper *node) {
 
 	Type * left = execute(node->left());
 	Type * right = execute(node->right());
-
-
-
+	
+	// TODO :
+	// Execute operation 
+	//
+	//
+	
+	if(left->temporary()) {
+		delete left;
+	}
+	if(right->temporary()) {
+		delete right;
+	}
+	
 	return 0;
 }

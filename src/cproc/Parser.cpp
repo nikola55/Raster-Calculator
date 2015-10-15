@@ -24,7 +24,7 @@ void destroyTree(Node * n) {
 }
 Node * sub_expr_or(Lexer &lex) ;
 // handles function calls
-	Function* func_prime(Lexer &lex) {
+Function* func_prime(Lexer &lex) {
 	Token name = lex.next();
 	if(name.type != NAME) return 0;
 	Function * func = new Function(name.value);

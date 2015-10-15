@@ -10,6 +10,14 @@ namespace runtime {
 class Context {
 	std::map<std::string, Type*> vars;
 public:
+
+	~Context() {
+		for(std::map<std::string, Type*>::iterator i = vars.begin() ;
+			i != vars.end(); i++) {
+			delete i->second;
+		}
+	}
+
 	Type * add(const std::string &nm, Type * t) {
 		if(vars.find(nm) != vars.end()) {
 			throw std::runtime_error("add(const std::string &nm, Type * t)"

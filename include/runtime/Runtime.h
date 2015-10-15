@@ -10,6 +10,7 @@ namespace runtime {
     class Type;
 
 class Runtime {
+	bool outerContext;
 	Context * cntx;
 	Type* name(cproc::Name *node);
 	void assign(cproc::Assign *node);
@@ -19,6 +20,7 @@ class Runtime {
 public:
 	Runtime();
 	Runtime(Context*);
+	~Runtime();
 	void execute(const std::vector<cproc::Node*> &stmtList);
 };
 

@@ -9,16 +9,14 @@ using namespace std;
 
 int main(void) {
 
-	std::string expr="Img = load('poptest.jpg');"
-                     "Edge = edge(Img, 'SOBEL');"
-                     "save(Edge, 'saved.jpg', 'jpeg');";
+	std::string expr = "save(edge(load('C:/Users/nikola.petkanski/mingw/pixes-master/f8iaAQQ.jpg'), 'SOBEL'), 'saved.jpg', 'jpeg');";
 
+	// VOID
+	
 	Lexer lex = Lexer(expr);
 	vector<Node*> stmtList  = parse(lex);
 
 	Runtime rt;
 
 	rt.execute(stmtList);
-
-
 }
