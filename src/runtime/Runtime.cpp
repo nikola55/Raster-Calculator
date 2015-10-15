@@ -1,5 +1,7 @@
 #include <Runtime.h>
+#include <Type.h>
 #include <Function.h>
+#include <Context.h>
 #include <stdexcept>
 
 runtime::Runtime::Runtime() {
@@ -128,6 +130,10 @@ runtime::Type* runtime::Runtime::oper(cproc::Oper *node) {
 	// Execute operation 
 	//
 	//
+	
+	switch(type) {
+		
+	}
 	
 	if(left->temporary()) {
 		delete left;

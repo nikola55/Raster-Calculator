@@ -9,7 +9,7 @@ using namespace std;
 
 int main(void) {
 
-	std::string expr = "save(edge(load('C:/Users/nikola.petkanski/mingw/pixes-master/f8iaAQQ.jpg'), 'SOBEL'), 'saved.jpg', 'jpeg');";
+	std::string expr = "save(edge(load('C:/Users/nikola.petkanski/mingw/pixes-master/f8iaAQQ.jpg'), 'SOBEL') + 1, 'saved.jpg', 'jpeg');";
 
 	// VOID
 	

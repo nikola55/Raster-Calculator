@@ -1,6 +1,9 @@
 #include <iostream>
+#include <stdexcept>
+
 
 #include <Function.h>
+#include <Type.h>
 #include <RasterManager.h>
 
 #include "Raster_pixes.h"
@@ -140,13 +143,10 @@ public:
     Type * result() { return res; }
 };
 
-}
-
-runtime::Function *
-runtime::resolve( Context * ctx,
-				  const std::string &name,
-				  const std::vector<Type*> &args
-				 ) {
+Function * libfunc_resolve( Context * ctx,
+							const std::string &name,
+							const std::vector<Type*> &args
+							) {
 
 	if(name == std::string("load")) {
         return new LoadFunc(args);
@@ -157,3 +157,7 @@ runtime::resolve( Context * ctx,
 	}
 	return 0;
 }
+
+}
+
+
