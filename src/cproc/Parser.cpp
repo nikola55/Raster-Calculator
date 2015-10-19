@@ -229,7 +229,7 @@ void cproc::printStatement(const Node* stmt, const std::string &spaces) {
 	using std::endl; 
 	if(stmt->isLeaf()) {
 		cout << spaces << "Leaf node: "; 
-		printNodeType(stmt->type());
+		cout << printNodeType(stmt->type()) << endl;
 		return;
 	}
 	else if(stmt->type() == FUNCTION_NODE) {

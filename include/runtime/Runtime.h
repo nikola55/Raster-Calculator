@@ -13,7 +13,7 @@ class Runtime {
 	bool outerContext;
 	Context * cntx;
 	Type* name(cproc::Name *node);
-	void assign(cproc::Assign *node);
+	Type* assign(cproc::Assign *node);
 	Type* function(cproc::Function *node);
 	Type* oper(cproc::Oper *node);
 	Type* execute(cproc::Node* node);

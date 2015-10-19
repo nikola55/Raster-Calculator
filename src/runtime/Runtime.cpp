@@ -3,6 +3,10 @@
 #include <Function.h>
 #include <Context.h>
 #include <stdexcept>
+#include <iostream>
+
+/// For debuging only 
+//#include <Parser.h>
 
 runtime::Runtime::Runtime() {
 	cntx = new Context();
@@ -14,14 +18,19 @@ runtime::Runtime::Runtime(Context*c)
 }
 
 runtime::Runtime::~Runtime() {
-	if(outerContext) {
+	if(!outerContext) {
 		delete cntx;
 	}
 }
 
+
 void runtime::Runtime::execute(const std::vector<cproc::Node*> &stmtList) {
 	for(int i = 0 ; i < stmtList.size() ; i++) {
-		execute(stmtList[i]);
+		//printStatement(stmtList[i], "");
+		Type * res = execute(stmtList[i]);
+		if(res->temporary()) {
+			delete res;
+		}
 	}
 }
 
@@ -49,7 +58,8 @@ runtime::Type * runtime::Runtime::execute(cproc::Node* node) {
 		}
 		case cproc::ASSIGNMENT: {
 			// create variable in the context.
-			assign(static_cast<cproc::Assign*>(node));
+			ret_type = 
+				assign(static_cast<cproc::Assign*>(node));
 			break;
 		}
 		case cproc::NAME_NODE: {
@@ -84,11 +94,12 @@ runtime::Type * runtime::Runtime::execute(cproc::Node* node) {
 	return ret_type;
 }
 
-void runtime::Runtime::assign(cproc::Assign *node) {
+runtime::Type* runtime::Runtime::assign(cproc::Assign *node) {
 	const std::string &varnm = node->name();
 	Type * tp = execute(node->rightHand());
 	tp->temporary(false);
 	cntx->add(varnm, tp);
+	return tp;
 }
 
 runtime::Type* runtime::Runtime::name(cproc::Name *node) {
@@ -97,21 +108,21 @@ runtime::Type* runtime::Runtime::name(cproc::Name *node) {
 }
 
 runtime::Type* runtime::Runtime::function(cproc::Function *node) {
+
 	const std::string &nm = node->name();
 	std::vector<Type*> argList;
+	
 	for(int i = 0 ; i < node->nArgs() ; i++) {
 		cproc::Node * arg = node->getArg(i);
 		argList.push_back(execute(arg));
 	}
 	
 	Function * func = resolve(cntx, nm, argList);
-    func->execute();
+	func->execute();
     Type * res = func->result();
-
     for(int i = 0 ;i  < argList.size() ; i++) {
         if(argList[i]->temporary()) {
             delete argList[i];
-            continue;
         }
     }
 
@@ -128,12 +139,22 @@ runtime::Type* runtime::Runtime::oper(cproc::Oper *node) {
 	
 	// TODO :
 	// Execute operation 
-	//
-	//
-	
-	switch(type) {
+	//  R + N (yes)
+	//  N + R (no)
+	//  R - N (yes)
+	//  N - R (no)
+	//  R * N (yes)
+	//  N * R (no)
+	// 
+	if( left->type() == Type::NUMBER && right->type() == Type::NUMBER ) {
 		
-	}
+	} else if (left->type() == Type::NUMBER && right->type() == Type::RASTER) {
+		throw std::runtime_error("operation not defined.");
+	} else if ( left->type() == Type::RASTER && right->type() == Type::NUMBER ) {
+		// RASTER OPER NUMBER
+	} else if ( left->type() == Type::RASTER && right->type() == Type::RASTER ) {
+		// RASTER OPER RASTER
+	} else throw std::runtime_error("not valid operands."); 
 	
 	if(left->temporary()) {
 		delete left;

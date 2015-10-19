@@ -17,10 +17,8 @@ class LoadFunc : public Function {
     std::string fnm;
     Raster * res;
 public:
-    LoadFunc(const std::vector<Type*> &args) {
-        if(args.size() != 1) {
-            throw std::runtime_error("LoadFunc(): Not valid number of arguments.");
-        }
+    LoadFunc(const std::vector<Type*> &args) :
+		Function("LoadFunc", 1, args.size()) {
         fnm = dynamic_cast<String*>(args[0])->value();
     }
     void execute() {
@@ -33,7 +31,6 @@ public:
         res = new Raster("", rgb);
     }
 
-    int nArgs() {return 1;}
     void addArg(int pos, Type *t) {}
     Type * arg(int pos) {}
     Type * result() { return res; }
@@ -44,10 +41,8 @@ class SaveFunc : public Function {
     std::string format;
     Raster * r;
 public:
-    SaveFunc(const std::vector<Type*> args) {
-        if(args.size()!=3) {
-            throw std::runtime_error("SaveFunc(): Not valid number of arguments.");
-        }
+    SaveFunc(const std::vector<Type*> args) :
+		Function("SaveFunc", 3, args.size()) {
         if(args[0]->type() != Type::RASTER ||
            args[1]->type() != Type::STRING ||
            args[2]->type() != Type::STRING ) {
@@ -77,10 +72,10 @@ public:
             default : throw std::runtime_error("SaveFunc::execute() Not valid raster type.");
         }
     }
-    int nArgs() {return 3;}
+
     void addArg(int pos, Type *t) {}
     Type * arg(int pos) {}
-    Type * result() { return new Void(); }
+    Type * result() { return new Void; }
 };
 
 class EdgeFunc : public Function {
@@ -88,10 +83,8 @@ class EdgeFunc : public Function {
     Raster * res;
     pix::EdgeDetectType t;
 public:
-    EdgeFunc(const std::vector<Type*> args) {
-        if(args.size()<1) {
-            throw std::runtime_error("EdgeFunc(): Not valid number of arguments.");
-        }
+    EdgeFunc(const std::vector<Type*> args) : 
+		Function("EdgeFunc", 1, args.size()) {
         r = dynamic_cast<Raster*>(args[0]);
         if(args.size() == 2 && args[1]->type() == Type::STRING) {
 
@@ -131,13 +124,13 @@ public:
                 break;
             }
             case raster::RASTER_BINARY: {
-
+				
                 break;
             }
             default : throw std::runtime_error("SaveFunc::execute() Not valid raster type.");
         }
     }
-    int nArgs() {return 3;}
+
     void addArg(int pos, Type *t) {}
     Type * arg(int pos) {}
     Type * result() { return res; }

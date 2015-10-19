@@ -1,6 +1,7 @@
 #ifndef _TYPE_H_
 #define _TYPE_H_
 #include <string>
+#include <cstring>
 #include <../raster/Raster.h>
 
 namespace runtime{
@@ -24,6 +25,7 @@ public:
     virtual void temporary(bool t) {
         tmp = t;
     }
+	virtual std::string string() const = 0;
     virtual ~Type(){}
 private:
 	Type_type t;
@@ -51,6 +53,11 @@ public:
 	raster::Raster * raster() {
         return r;
 	}
+	
+	virtual std::string string() const {
+		return "[ Raster :" + r->details() + " ]";
+	}
+	
     virtual ~Raster() { delete r; }
 };
 
@@ -63,6 +70,11 @@ public:
 	const double value() const {
 		return v;
 	}
+	virtual std::string string() const {
+		char buff[20];
+		sprintf(buff, "%f", v);
+		return std::string(buff);
+	}
 };
 
 class String : public Type {
@@ -74,23 +86,35 @@ public:
 	const std::string& value() const {
 		return str;
 	}
+	virtual std::string string() const {
+		return str;
+	}
 };
 
 class Void : public Type {
 public:
 	Void() : Type(VOID) {
 	}
+	virtual std::string string() const {
+		return "[Void]";
+	}
 };
 
 // The function is not an ordinary
 // type so it doesn't inherits from Type
 class Function {
+protected:
+	const char * funcName;
+	int minArgc;
+	int argc;
 public:
+	Function(const char * fn, int mac, int ac);
 	virtual void execute() = 0;
-	virtual int nArgs() = 0;
+	virtual int nArgs();
 	virtual void addArg(int pos, Type *t) = 0;
 	virtual Type * arg(int pos) = 0;
 	virtual Type * result() = 0;
+	virtual const char * name();
 };
 }
 #endif
