@@ -10,10 +10,8 @@ using namespace std;
 int main(void) {
 
 	std::string expr = 
-	"Img = load('C:/Users/nikola.petkanski/mingw/pixes-master/f8iaAQQ.jpg'); "
-	"Edge = edge(Img, 'SOBEL');                                              "
-	"print(Edge);                                                            "
-	"save(Edge, 'saved.jpg', 'jpeg');                                        ";
+	"ExprRes = (1.111*333)-64.00001/22.11;					"
+	"print(ExprRes);				";
 	// VOID
 	
 	Lexer lex = Lexer(expr);
