@@ -2,6 +2,8 @@
 #include <Type.h>
 #include <Function.h>
 #include <Context.h>
+#include <Opers.h>
+
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
@@ -131,35 +133,6 @@ runtime::Type* runtime::Runtime::function(cproc::Function *node) {
 	return res;
 }
 
-inline runtime::Number * num_num_oper(const runtime::Number *l, const runtime::Number *r, cproc::Oper::OperType type) {
-	runtime::Number * n;
-	switch(type) {
-		case cproc::Oper::ADD :
-			n = new runtime::Number(l->value()+r->value());
-			break;
-		case cproc::Oper::SUB :
-			n = new runtime::Number(l->value()-r->value());
-			break;
-		case cproc::Oper::MUL :
-			n = new runtime::Number(l->value()*r->value());
-			break;
-		case cproc::Oper::DIV :
-			n = new runtime::Number(l->value()/r->value());
-			break;
-		case cproc::Oper::AND :
-			n = new runtime::Number((int)floor(l->value())&(int)floor(r->value()));
-			break;
-		case cproc::Oper::OR :
-			n = new runtime::Number((int)floor(l->value())|(int)floor(r->value()));
-			break;
-		case cproc::Oper::XOR :
-			n = new runtime::Number((int)floor(l->value())^(int)floor(r->value()));
-			break;
-		default: throw std::runtime_error("Runtime::oper not supported opperation.");
-	}
-	return n;
-}
-
 runtime::Type* runtime::Runtime::oper(cproc::Oper *node) {
 
 	cproc::Oper::OperType type = node->operType();
@@ -184,7 +157,7 @@ runtime::Type* runtime::Runtime::oper(cproc::Oper *node) {
 	} else if (left->type() == Type::NUMBER && right->type() == Type::RASTER) {
 		throw std::runtime_error("operation not defined.");
 	} else if ( left->type() == Type::RASTER && right->type() == Type::NUMBER ) {
-		// RASTER OPER NUMBER
+		
 	} else if ( left->type() == Type::RASTER && right->type() == Type::RASTER ) {
 		// RASTER OPER RASTER
 	} else throw std::runtime_error("not valid operands."); 

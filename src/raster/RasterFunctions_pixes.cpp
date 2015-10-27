@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdexcept>
-
+#include <cmath>
 
 #include <Function.h>
 #include <Type.h>
@@ -41,7 +41,7 @@ class SaveFunc : public Function {
     std::string format;
     Raster * r;
 public:
-    SaveFunc(const std::vector<Type*> args) :
+    SaveFunc(const std::vector<Type*> &args) :
 		Function("SaveFunc", 3, args.size()) {
         if(args[0]->type() != Type::RASTER ||
            args[1]->type() != Type::STRING ||
@@ -83,7 +83,7 @@ class EdgeFunc : public Function {
     Raster * res;
     pix::EdgeDetectType t;
 public:
-    EdgeFunc(const std::vector<Type*> args) : 
+    EdgeFunc(const std::vector<Type*> &args) : 
 		Function("EdgeFunc", 1, args.size()) {
         r = dynamic_cast<Raster*>(args[0]);
         if(args.size() == 2 && args[1]->type() == Type::STRING) {
@@ -136,6 +136,64 @@ public:
     Type * result() { return res; }
 };
 
+class BlurFunction : public Function {
+	Raster *r;
+	Raster *res;
+	int kernel_sz;
+public:
+	BlurFunction(const std::vector<Type*> &args) :
+		Function("BlurFunction", 1, args.size()) {
+		
+		if(args[0]->type() != Type::RASTER) {
+			throw std::runtime_error("BlurFunction not valid argument 1.");
+		}
+		
+		r = dynamic_cast<Raster*>(args[0]);
+		kernel_sz = 3;
+		
+		if(args.size() == 2 && args[1]->type() == Type::NUMBER) {
+			kernel_sz = (int)floor(dynamic_cast<Number*>(args[1])->value());
+			if(!(kernel_sz & 1)) 
+				throw std::runtime_error("BlurFunction not valid argument 2.");
+		}
+		
+	}
+	 void execute() {
+        switch(r->raster()->type()) {
+            case raster::RASTER_RGB: {
+
+                raster::RasterPixesRGB *rgb =
+                    dynamic_cast<raster::RasterPixesRGB*>(r->raster());
+
+                raster::RasterPixesRGB *result =
+                    dynamic_cast<raster::RasterPixesRGB*>(
+                        raster::create(raster::RasterSpec(
+                            rgb->r->nCols, rgb->r->nRows, raster::RASTER_RGB))
+					);
+
+                pix::blur(*rgb->r, *result->r, kernel_sz);
+                pix::blur(*rgb->g, *result->g, kernel_sz);
+                pix::blur(*rgb->b, *result->b, kernel_sz);
+
+                res = new Raster("", result);
+            }
+            case raster::RASTER_GRAY: {
+
+                break;
+            }
+            case raster::RASTER_BINARY: {
+				
+                break;
+            }
+            default : throw std::runtime_error("SaveFunc::execute() Not valid raster type.");
+        }
+    }
+
+    void addArg(int pos, Type *t) {}
+    Type * arg(int pos) {}
+    Type * result() { return res; }
+};
+
 Function * libfunc_resolve( Context * ctx,
 							const std::string &name,
 							const std::vector<Type*> &args
@@ -147,10 +205,10 @@ Function * libfunc_resolve( Context * ctx,
 		return new SaveFunc(args);
 	} else if (name == std::string("edge")) {
 		return new EdgeFunc(args);
+	} else if (name == std::string("blur")) {
+		return new BlurFunction(args);
 	}
 	return 0;
 }
 
 }
-
-
